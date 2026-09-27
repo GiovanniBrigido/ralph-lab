@@ -17,8 +17,8 @@
         "Typecheck passes"
       ],
       "priority": 1,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Commit 687d610 enviado para origin/main."
     },
     {
       "id": "US-002",
@@ -37,8 +37,8 @@
         "Typecheck passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "pipeline.py: 420 linhas no join, 3 orfas (V00421-V00423), loja 108 sem vendas."
     },
     {
       "id": "US-003",
@@ -56,8 +56,8 @@
         "Typecheck passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "pivot_receita.csv com cabecalho exato, 4x6 celulas, soma 931274.06."
     },
     {
       "id": "US-004",
@@ -75,8 +75,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "index.html verificado em Edge headless (1000px e viewport 375px sem overflow), sem erros de JS."
     },
     {
       "id": "US-005",
@@ -92,8 +92,8 @@
         "Verify in browser using dev-browser skill"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Conclusao com 615 caracteres, gerada a partir do pivot."
     },
     {
       "id": "US-006",
@@ -114,8 +114,8 @@
         "Tests pass"
       ],
       "priority": 6,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "7 testes pytest passando com -W error para DeprecationWarning/FutureWarning."
     },
     {
       "id": "US-007",
@@ -130,8 +130,8 @@
         "Tests pass"
       ],
       "priority": 7,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "README.md; 2a execucao do pipeline deixa git status limpo; commit 5d281dd."
     }
   ]
 }
