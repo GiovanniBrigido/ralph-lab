@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Receita mensal por região (jan a jun 2026)</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    background: Canvas;
+    color: CanvasText;
+  }
+  main { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin: 0 0 16px; }
+  .grafico { position: relative; width: 100%; height: 420px; }
+  @media (max-width: 600px) { .grafico { height: 320px; } }
+  #conclusao { margin-top: 24px; font-size: 1rem; }
+  footer { margin-top: 24px; font-size: 0.85rem; opacity: 0.7; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Receita mensal por região (jan a jun 2026)</h1>
+  <div class="grafico"><canvas id="chart" aria-label="Receita mensal por região (jan a jun 2026)" role="img"></canvas></div>
+  <p id="conclusao">No primeiro semestre de 2026 as 4 regiões somaram R$ 931.274,06 em receita. A região Sudeste liderou o acumulado com R$ 265.077,49, seguida de perto por Nordeste e Centro-Oeste, o que mostra um grupo de três regiões com desempenho muito próximo. A região Sul ficou em último lugar com R$ 146.009,84, cerca de 55% do valor da líder. Isso se explica em parte pela cobertura: a região Sul tem apenas uma loja ativa (Moinhos), pois a loja Batel está cadastrada mas não registrou nenhuma venda no período. O mês de maior receita total foi 2026-02, com R$ 169.800,88, enquanto 2026-03 foi o mais fraco, com R$ 142.934,74.</p>
+  <footer>Fonte: vendas_lojas.csv (inner join de vendas.csv e lojas.csv). Valores em reais (BRL).</footer>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const DADOS = {"meses": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06"], "series": [{"cor": "#2563eb", "regiao": "Centro-Oeste", "valores": [44144.42, 48227.94, 41682.96, 38855.88, 46672.07, 38740.7]}, {"cor": "#d97706", "regiao": "Nordeste", "valores": [46222.85, 48042.96, 45850.7, 44053.04, 35371.5, 42321.71]}, {"cor": "#059669", "regiao": "Sudeste", "valores": [44767.33, 48544.11, 35816.56, 46281.64, 41083.43, 48584.42]}, {"cor": "#dc2626", "regiao": "Sul", "valores": [27703.36, 24985.87, 19584.52, 22976.51, 25094.42, 25665.16]}]};
+  const fmt = (v) => v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  new Chart(document.getElementById("chart"), {
+    type: "bar",
+    data: {
+      labels: DADOS.meses,
+      datasets: DADOS.series.map((s) => ({
+        label: s.regiao,
+        data: s.valores,
+        backgroundColor: s.cor,
+        borderRadius: 3,
+      })),
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: { display: true, text: "Receita mensal por região (jan a jun 2026)" },
+        legend: { position: "top" },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.dataset.label}: R$ ${fmt(ctx.parsed.y)}`,
+          },
+        },
+      },
+      scales: {
+        x: { title: { display: true, text: "Mês" } },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: "Receita (BRL)" },
+          ticks: { callback: (v) => "R$ " + fmt(v) },
+        },
+      },
+    },
+  });
+</script>
+</body>
+</html>
