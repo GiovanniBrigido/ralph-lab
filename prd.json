@@ -1,0 +1,137 @@
+{
+  "project": "ralph-lab",
+  "branchName": "ralph/pipeline-vendas-lojas",
+  "description": "Pipeline Vendas x Lojas - inner join de vendas.csv e lojas.csv por id_loja com tratamento de 3 vendas orfas (loja 999) e 1 loja sem vendas (108), pivot de receita mensal por regiao, pagina estatica index.html com grafico de barras agrupadas (Chart.js) e paragrafo de conclusao, testes unitarios com valores de conferencia, publicado em https://github.com/GiovanniBrigido/ralph-lab",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Inicializar repositorio proprio e enviar para ralph-lab",
+      "description": "Como desenvolvedor, quero que esta pasta seja um repositorio Git independente ligado ao ralph-lab para que os entregaveis fiquem versionados separadamente do repositorio Aula2.",
+      "acceptanceCriteria": [
+        "git init executado dentro de exercicio-ia-3.1",
+        "Remote origin aponta para https://github.com/GiovanniBrigido/ralph-lab.git",
+        "Existe .gitignore ignorando ao menos __pycache__/, .venv/, .pytest_cache/ e *.pyc",
+        "Existe requirements.txt listando pandas e pytest",
+        "Commit inicial contendo vendas.csv, lojas.csv, prd.json, tasks/prd-pipeline-vendas-lojas.md, .gitignore e requirements.txt",
+        "git push -u origin main concluido com sucesso e os arquivos visiveis no GitHub",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Script de join com tratamento de anomalias",
+      "description": "Como analista, quero um script que una vendas e lojas por id_loja e separe as anomalias em arquivos proprios para que eu possa auditar o que ficou de fora.",
+      "acceptanceCriteria": [
+        "Existe pipeline.py na raiz, executavel com python pipeline.py, que le vendas.csv e lojas.csv com pandas tratando id_loja como inteiro",
+        "Logica exposta em funcoes importaveis: carregar_dados(), fazer_join(vendas, lojas) retornando (join, orfas, lojas_sem_vendas); execucao protegida por if __name__ == '__main__':",
+        "Gera vendas_lojas.csv com inner join por id_loja, exatamente 420 linhas de dados, colunas na ordem: id_venda,data,id_loja,categoria,unidades,receita_brl,nome_loja,regiao,uf,gerente",
+        "vendas_lojas.csv mantem a ordem original de vendas.csv (por id_venda)",
+        "Gera vendas_orfas.csv com as vendas cujo id_loja nao existe em lojas.csv, mesmas colunas de vendas.csv; contem exatamente V00421, V00422 e V00423",
+        "Gera lojas_sem_vendas.csv com as lojas sem nenhuma venda, mesmas colunas de lojas.csv; contem exatamente a loja 108",
+        "Todos os CSVs gravados com separador virgula, UTF-8, sem coluna de indice do pandas (index=False)",
+        "Script imprime no console um resumo: total de vendas lidas (423), vendas unidas (420), vendas orfas (3), lojas sem vendas (1)",
+        "python -m py_compile pipeline.py passa sem erro",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Pivot de receita mensal por regiao",
+      "description": "Como analista, quero uma tabela de receita por regiao e mes para comparar o desempenho regional ao longo do semestre.",
+      "acceptanceCriteria": [
+        "pipeline.py expoe montar_pivot(join) e gera pivot_receita.csv a partir do DataFrame do join (nao diretamente de vendas.csv)",
+        "Cabecalho exato: regiao,2026-01,2026-02,2026-03,2026-04,2026-05,2026-06",
+        "Exatamente 4 linhas de dados (Centro-Oeste, Nordeste, Sudeste, Sul) e 7 colunas; arquivo com 5 linhas no total",
+        "Linhas ordenadas alfabeticamente por regiao",
+        "Cada celula numerica e a soma de receita_brl da regiao no mes, com ponto decimal e exatamente 2 casas (ex.: 24513.37, 1200.00); usar float_format='%.2f' ou formatacao equivalente",
+        "Nenhuma celula contem R$, espaco, virgula decimal ou separador de milhar; toda celula numerica casa com a regex ^\\d+\\.\\d{2}$",
+        "Nenhuma celula vazia ou NaN",
+        "Valores de conferencia: Sul x 2026-03 = 19584.52; Sudeste x 2026-06 = 48584.42; soma das 24 celulas = 931274.06 com tolerancia 0.01",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Pagina estatica com grafico de barras agrupadas",
+      "description": "Como gestor, quero abrir um arquivo HTML no navegador e ver a receita mensal por regiao em um grafico, sem precisar rodar servidor.",
+      "acceptanceCriteria": [
+        "pipeline.py gera index.html na raiz com os dados do pivot embutidos como JSON dentro de uma tag <script> (gerado com json.dumps), sem fetch de arquivo externo",
+        "Usa Chart.js carregado via CDN https://cdn.jsdelivr.net/npm/chart.js",
+        "Grafico de barras agrupadas: eixo X com os 6 meses (2026-01 a 2026-06), uma barra por regiao em cada mes (24 barras), uma cor distinta por regiao, legenda visivel, regioes na mesma ordem alfabetica do pivot",
+        "Titulo da pagina e do grafico: 'Receita mensal por regiao (jan a jun 2026)'",
+        "Eixo Y rotulado em BRL; tooltip mostra o valor com 2 casas decimais",
+        "Pagina tem lang='pt-BR', <meta charset='utf-8'>, largura maxima ~960px centralizada, margem lateral 16px, fonte do sistema, sem rolagem horizontal em largura de celular",
+        "Abrir index.html via file:// renderiza o grafico sem erros no console",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Paragrafo de conclusao gerado a partir dos dados",
+      "description": "Como gestor, quero um paragrafo de conclusao abaixo do grafico que resuma os destaques do semestre para nao precisar interpretar os numeros sozinho.",
+      "acceptanceCriteria": [
+        "pipeline.py expoe gerar_conclusao(pivot) que retorna uma string; index.html contem <p id=\"conclusao\"> logo abaixo do grafico com esse texto",
+        "Texto em portugues com 300 caracteres ou mais (contados sem tags HTML)",
+        "Texto cita: regiao com maior receita acumulada (Sudeste, 265077.49), regiao com menor receita acumulada (Sul, 146009.84), mes de maior receita total (2026-02, 169800.88) e a observacao de que a regiao Sul tem apenas uma loja ativa (Batel, 108, sem vendas)",
+        "Valores citados sao calculados pelo script a partir do pivot, nao digitados a mao",
+        "pipeline.py encerra com SystemExit e mensagem clara se o texto gerado tiver menos de 300 caracteres",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Testes unitarios com valores de conferencia",
+      "description": "Como desenvolvedor, quero testes automatizados que comparem a saida do pipeline com valores conhecidos para que qualquer regressao no join ou no pivot seja detectada imediatamente.",
+      "acceptanceCriteria": [
+        "Existe tests/test_pipeline.py executavel com python -m pytest -q a partir da raiz, rodando sobre os CSVs reais (sem fixtures sinteticas)",
+        "test_join_tem_420_linhas: len(join) == 420",
+        "test_orfas_e_lojas_sem_vendas: ids das orfas == {'V00421','V00422','V00423'} e lista de id_loja sem vendas == [108]",
+        "test_receita_total: soma de receita_brl do join == pytest.approx(931274.06, abs=0.01)",
+        "test_regiao_lider: regiao com maior soma no pivot e 'Sudeste' com pytest.approx(265077.49, abs=0.01)",
+        "test_pivot_formato: pivot tem 4 linhas, colunas exatamente ['regiao','2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'] e celula Sul x 2026-03 == pytest.approx(19584.52, abs=0.01)",
+        "test_conclusao_minimo_300: len(gerar_conclusao(pivot)) >= 300",
+        "test_pivot_csv_formato_numerico: le pivot_receita.csv do disco e confirma que toda celula numerica casa com a regex ^\\d+\\.\\d{2}$",
+        "python -m pytest -q termina com 7 testes passando e zero avisos de depreciacao do pandas",
+        "python -m py_compile pipeline.py tests/test_pipeline.py passa sem erro",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "README e commit final",
+      "description": "Como avaliador, quero abrir o repositorio ralph-lab e entender em um minuto o que foi feito e como reproduzir.",
+      "acceptanceCriteria": [
+        "README.md na raiz descreve: objetivo, instalacao (pip install -r requirements.txt), execucao (python pipeline.py), testes (python -m pytest -q), lista dos arquivos gerados, tabela de valores de conferencia e como as anomalias foram tratadas",
+        "Todos os artefatos gerados (vendas_lojas.csv, vendas_orfas.csv, lojas_sem_vendas.csv, pivot_receita.csv, index.html) estao commitados",
+        "Rodar python pipeline.py duas vezes seguidas produz arquivos identicos (git status limpo apos a segunda execucao)",
+        "Push final para origin/main concluido",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
