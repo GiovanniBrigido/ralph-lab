@@ -1,0 +1,13 @@
+# Ralph Progress Log
+Started: Sun Sep 27 17:47:02 HPBA 2026
+---
+
+## 2026-09-27 - Verificacao final (nenhuma story pendente)
+- Todas as 7 stories (US-001 a US-007) ja estavam com passes: true no prd.json.
+- Nenhuma implementacao feita nesta iteracao; apenas verificacao.
+- Verificado: python -m py_compile pipeline.py tests/test_pipeline.py OK; python -m pytest -q -> 7 passed.
+- **Learnings for future iterations:**
+  - O PRD vive em scripts/ralph/prd.json (movido da raiz); progress.txt e prompt.md ficam na mesma pasta.
+  - Branch de trabalho real e main (o branchName do PRD, ralph/pipeline-vendas-lojas, nunca foi criado; tudo foi commitado em main).
+  - pipeline.py e idempotente: rodar duas vezes deixa git status limpo.
+---

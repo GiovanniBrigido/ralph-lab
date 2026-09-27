@@ -30,8 +30,27 @@ de internet para carregar o Chart.js via CDN).
 | `lojas_sem_vendas.csv` | gerado | 1 loja sem nenhuma venda |
 | `pivot_receita.csv` | gerado | receita por região (4 linhas) x mês (6 colunas) |
 | `index.html` | gerado | gráfico de barras agrupadas e conclusão |
-| `tasks/prd-pipeline-vendas-lojas.md` | planejamento | PRD completo |
-| `prd.json` | planejamento | stories no formato Ralph |
+| `tasks/prd-pipeline-vendas-lojas.md` | planejamento | PRD completo, gerado com a skill `/prd` |
+| `scripts/ralph/prd.json` | planejamento | stories no formato Ralph, gerado com a skill `/ralph` |
+| `scripts/ralph/ralph.sh` | Ralph | loop autônomo que executa as stories com `claude` ou `amp` |
+| `scripts/ralph/CLAUDE.md` | Ralph | prompt de cada iteração para o Claude Code |
+| `scripts/ralph/progress.txt` | Ralph | log de progresso escrito pelo agente a cada iteração |
+| `.claude/skills/prd/`, `.claude/skills/ralph/` | Ralph | skills `/prd` e `/ralph` disponíveis no ambiente do agente |
+| `ralph-run.log` | Ralph | saída da execução `scripts/ralph/ralph.sh --tool claude 1` |
+
+## Fluxo Ralph
+
+1. `/prd` gerou o PRD em `tasks/` a partir da descrição do exercício e de 5 perguntas de esclarecimento.
+2. `/ralph` converteu o PRD em `scripts/ralph/prd.json` com 7 stories ordenadas por dependência.
+3. As stories foram executadas em ordem de prioridade e marcadas com `passes: true`.
+4. `scripts/ralph/ralph.sh --tool claude 1` rodou uma iteração de verificação, registrada em `ralph-run.log`,
+   e encerrou com `<promise>COMPLETE</promise>`.
+
+Para rodar o loop de novo:
+
+```bash
+bash scripts/ralph/ralph.sh --tool claude 10 2>&1 | tee ralph-run.log
+```
 
 ## Tratamento das anomalias
 
